@@ -1,0 +1,45 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "prettier/@typescript-eslint"
+  ],
+  "plugins": ["import", "prettier", "@typescript-eslint"],
+  "env": {
+    "es6": true,
+    "node": true,
+    "browser": false,
+    "jest": true
+  },
+  "parserOptions": {
+    // Allows for the parsing of modern ECMAScript features
+    "ecmaVersion": 2018,
+    // Allows for the use of imports
+    "sourceType": "module",
+    // https://blog.geographer.fr/eslint-parser-services, https://www.robertcooper.me/using-eslint-and-prettier-in-a-typescript-project
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "react/prop-types": "off",
+    "import/no-cycle": "off",
+    "no-multi-assign": "off",
+    "import/imports-first": ["error", "absolute-first"],
+    "quotes": [
+      2,
+      "single",
+      {
+        "avoidEscape": true
+      }
+    ],
+    "semi": ["error", "never"],
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-unsafe-return": "off",
+    "@typescript-eslint/require-await": "off"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "lib": ["es2017"],
+    "module": "commonjs",
+    "removeComments": true,
+    "esModuleInterop": true,
+    "noUnusedLocals": true,
+    "moduleResolution": "node",
+    "outDir": "lib",
+    "noUnusedParameters": false,
+    "sourceMap": true,
+    "target": "es2017",
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true
+  },
+  "include": ["./src/**/*.ts", "./tests/**/*.ts"],
+  "exclude": ["node_modules/**/*"]
+}

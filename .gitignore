@@ -1,0 +1,16 @@
+# package directories
+node_modules
+jspm_packages
+
+# Coverage reports
+coverage
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Ignore built ts files
+lib/**/*
+dist/**/*
+
+tests/*.db
