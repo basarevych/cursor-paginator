@@ -18,7 +18,7 @@ describe('Paginator', () => {
   }
 
   function getUserCursor(index: number) {
-    return encodeCursor(generateCursor({ node: users[index], pagination: { orderBy, orderDir } }))
+    return encodeCursor(generateCursor({ node: users[index], page: { orderBy, orderDir } }))
   }
 
   beforeAll(async () => {
@@ -41,7 +41,7 @@ describe('Paginator', () => {
     const list = await paginate({
       knex,
       table: 'users',
-      pagination: {
+      page: {
         first: size,
         orderBy,
         orderDir,
@@ -73,7 +73,7 @@ describe('Paginator', () => {
     const list = await paginate({
       knex,
       table: 'users',
-      pagination: {
+      page: {
         first: size,
         after: getUserCursor(cursor),
         orderBy,
@@ -103,7 +103,7 @@ describe('Paginator', () => {
     const list = await paginate({
       knex,
       table: 'users',
-      pagination: {
+      page: {
         first: size,
         after: getUserCursor(cursor),
         orderBy,
@@ -136,7 +136,7 @@ describe('Paginator', () => {
     const list = await paginate({
       knex,
       table: 'users',
-      pagination: {
+      page: {
         last: size,
         orderBy,
         orderDir,
@@ -167,7 +167,7 @@ describe('Paginator', () => {
     const list = await paginate({
       knex,
       table: 'users',
-      pagination: {
+      page: {
         last: size,
         before: getUserCursor(cursor),
         orderBy,
@@ -197,7 +197,7 @@ describe('Paginator', () => {
     const list = await paginate({
       knex,
       table: 'users',
-      pagination: {
+      page: {
         last: size,
         before: getUserCursor(cursor),
         orderBy,

@@ -18,7 +18,7 @@ describe('Paginator', () => {
   }
 
   function getUserCursor(index: number) {
-    return encodeCursor(generateCursor({ node: users[index], pagination: { orderBy, orderDir } }))
+    return encodeCursor(generateCursor({ node: users[index], page: { orderBy, orderDir } }))
   }
 
   beforeAll(async () => {
@@ -39,10 +39,10 @@ describe('Paginator', () => {
     ${6} | ${false} | ${false} | ${[0, 1, 2, 3, 4, 5]}
   `('first page (size: $size)', async ({ size, cursor, next, prev, result }) => {
     const list = await paginate({
-      knexConfig: { client: 'sqlite' },
+      config: { client: 'sqlite', useNullAsDefault: true },
       prisma,
       table: 'users',
-      pagination: {
+      page: {
         first: size,
         orderBy,
         orderDir,
@@ -72,10 +72,10 @@ describe('Paginator', () => {
     ${6} | ${5}   | ${false} | ${true} | ${[]}
   `('second page (size: $size)', async ({ size, cursor, next, prev, result }) => {
     const list = await paginate({
-      knexConfig: { client: 'sqlite' },
+      config: { client: 'sqlite', useNullAsDefault: true },
       prisma,
       table: 'users',
-      pagination: {
+      page: {
         first: size,
         after: getUserCursor(cursor),
         orderBy,
@@ -103,10 +103,10 @@ describe('Paginator', () => {
     ${3} | ${5}   | ${false} | ${true} | ${[]}
   `('third page (size: $size)', async ({ size, cursor, next, prev, result }) => {
     const list = await paginate({
-      knexConfig: { client: 'sqlite' },
+      config: { client: 'sqlite', useNullAsDefault: true },
       prisma,
       table: 'users',
-      pagination: {
+      page: {
         first: size,
         after: getUserCursor(cursor),
         orderBy,
@@ -137,10 +137,10 @@ describe('Paginator', () => {
     ${6} | ${false} | ${false} | ${[0, 1, 2, 3, 4, 5]}
   `('reverse: third page (size: $size)', async ({ size, cursor, next, prev, result }) => {
     const list = await paginate({
-      knexConfig: { client: 'sqlite' },
+      config: { client: 'sqlite', useNullAsDefault: true },
       prisma,
       table: 'users',
-      pagination: {
+      page: {
         last: size,
         orderBy,
         orderDir,
@@ -169,10 +169,10 @@ describe('Paginator', () => {
     ${5} | ${1}   | ${true} | ${false} | ${[0]}
   `('reverse: second page (size: $size)', async ({ size, cursor, next, prev, result }) => {
     const list = await paginate({
-      knexConfig: { client: 'sqlite' },
+      config: { client: 'sqlite', useNullAsDefault: true },
       prisma,
       table: 'users',
-      pagination: {
+      page: {
         last: size,
         before: getUserCursor(cursor),
         orderBy,
@@ -200,10 +200,10 @@ describe('Paginator', () => {
     ${3} | ${0}   | ${true} | ${false} | ${[]}
   `('reverse: first page (size: $size)', async ({ size, cursor, next, prev, result }) => {
     const list = await paginate({
-      knexConfig: { client: 'sqlite' },
+      config: { client: 'sqlite', useNullAsDefault: true },
       prisma,
       table: 'users',
-      pagination: {
+      page: {
         last: size,
         before: getUserCursor(cursor),
         orderBy,

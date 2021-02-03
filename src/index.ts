@@ -1,32 +1,32 @@
 import Knex from 'knex'
 
-import { Options, Pagination, PaginatedData } from './constants'
+import { Options, Page, Connection } from './constants'
 import { paginate as doPaginate } from './paginate'
 
 export * from './constants'
 
 export const paginate = <OrderType, NodeType>({
-  knexConfig,
+  config,
   knex,
   prisma,
   table,
   qb,
-  pagination,
+  page,
   options,
 }: {
-  knexConfig?: Knex.Config
+  config?: Knex.Config
   knex?: any
   prisma?: any
   table?: string
   qb?: (qb: Knex.QueryBuilder) => Knex.QueryBuilder
-  pagination?: Pagination<OrderType>
+  page?: Page<OrderType>
   options?: Options
-}): Promise<PaginatedData<NodeType>> => {
+}): Promise<Connection<NodeType>> => {
   let runQuery
   if (knex) {
     runQuery = (sql: string) => knex.raw(sql)
   } else {
-    knex = Knex(knexConfig)
+    knex = Knex(config)
     if (prisma) {
       runQuery = (sql: string) => prisma.$queryRaw(sql)
     } else {
@@ -43,5 +43,5 @@ export const paginate = <OrderType, NodeType>({
     throw new Error('Query builder or table name is required')
   }
 
-  return doPaginate<OrderType, NodeType>(runQuery, queryBuilder, pagination, options)
+  return doPaginate<OrderType, NodeType>(runQuery, queryBuilder, page, options)
 }

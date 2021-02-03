@@ -1,5 +1,7 @@
-import base64 from 'base-64'
+import { decompress } from 'lzbase62'
 
-export function decodeCursor(cursor: string): any {
-  return JSON.parse(base64.decode(cursor))
+import { Cursor } from './constants'
+
+export function decodeCursor(cursor: string): Cursor {
+  return JSON.parse(decompress(cursor))
 }

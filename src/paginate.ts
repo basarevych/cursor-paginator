@@ -1,7 +1,7 @@
 import Knex from 'knex'
 import equal from 'fast-deep-equal'
 
-import { DEFAULT_PAGE_SIZE, Options, Pagination, PaginatedData, Cursor } from './constants'
+import { DEFAULT_PAGE_SIZE, Options, Page, Connection, Cursor } from './constants'
 import { generateCursor } from './generate-cursor'
 import { decodeCursor } from './decode-cursor'
 import { encodeCursor } from './encode-cursor'
@@ -11,10 +11,10 @@ import { getDataQuery } from './get-data-query'
 export async function paginate<OrderType, NodeType>(
   runQuery: (sql: string) => Promise<any>,
   queryBuilder: Knex.QueryBuilder,
-  pagination: Pagination<OrderType> = {},
+  page: Page<OrderType> = {},
   options: Options = {},
-): Promise<PaginatedData<NodeType>> {
-  const { first, after, last, before, orderBy, orderDir } = pagination
+): Promise<Connection<NodeType>> {
+  const { first, after, last, before, orderBy, orderDir } = page
   const { pageSize = DEFAULT_PAGE_SIZE, maxPageSize = DEFAULT_PAGE_SIZE, modifyEdge } = options
 
   // sanity check
@@ -27,7 +27,7 @@ export async function paginate<OrderType, NodeType>(
     (first && before) ||
     (last && after)
   ) {
-    throw new Error('Invalid pagination options')
+    throw new Error('Invalid page options')
   }
 
   // how many records to fetch after/before the cursor
@@ -79,7 +79,6 @@ export async function paginate<OrderType, NodeType>(
   }
 
   // get total count
-
   const totalResult = await runQuery(
     getTotalCountQuery({
       queryBuilder,
@@ -87,11 +86,11 @@ export async function paginate<OrderType, NodeType>(
   )
   const totalCount = totalResult.length && totalResult[0].count
 
-  // get the data and total count
+  // get the data
   const data: NodeType[] = await runQuery(
     getDataQuery<OrderType>({
       queryBuilder,
-      pagination,
+      page,
       options,
       cursor,
       take: extraTake,
@@ -107,13 +106,13 @@ export async function paginate<OrderType, NodeType>(
   // if we did we know there is a page there
   if (cursor && data.length) {
     if (take > 0) {
-      const firstCursor = generateCursor<OrderType>({ node: data[0], pagination, options })
+      const firstCursor = generateCursor<OrderType>({ node: data[0], page, options })
       if (equal(firstCursor, cursor)) {
         hasPreviousPage = true
         data.shift()
       }
     } else {
-      const lastCursor = generateCursor<OrderType>({ node: data[data.length - 1], pagination, options })
+      const lastCursor = generateCursor<OrderType>({ node: data[data.length - 1], page, options })
       if (equal(lastCursor, cursor)) {
         hasNextPage = true
         data.pop()
@@ -137,7 +136,7 @@ export async function paginate<OrderType, NodeType>(
   const edges = await Promise.all(
     data.map(async (item) => {
       const itemCursor = encodeCursor(
-        generateCursor<OrderType>({ node: item, pagination, options }),
+        generateCursor<OrderType>({ node: item, page, options }),
       )
       if (!modifyEdge) {
         return {
@@ -150,7 +149,7 @@ export async function paginate<OrderType, NodeType>(
       return {
         ...transformed,
         cursor: encodeCursor(
-          generateCursor<OrderType>({ node: transformed.node, pagination, options }),
+          generateCursor<OrderType>({ node: transformed.node, page, options }),
         ),
       }
     }),
@@ -163,10 +162,8 @@ export async function paginate<OrderType, NodeType>(
     pageInfo: {
       hasNextPage,
       hasPreviousPage,
-      startCursor: data.length ? encodeCursor(generateCursor({ node: data[0], pagination, options })) : null,
-      endCursor: data.length
-        ? encodeCursor(generateCursor({ node: data[data.length - 1], pagination, options }))
-        : null,
+      startCursor: data.length ? encodeCursor(generateCursor({ node: data[0], page, options })) : null,
+      endCursor: data.length ? encodeCursor(generateCursor({ node: data[data.length - 1], page, options })) : null,
     },
   }
 }

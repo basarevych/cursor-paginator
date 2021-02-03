@@ -1,21 +1,21 @@
 import Knex from 'knex'
 
-import { Cursor, DEFAULT_CURSOR_COLUMN, Options, Pagination } from './constants'
+import { Cursor, DEFAULT_CURSOR_COLUMN, Options, Page } from './constants'
 
 export function getDataQuery<OrderType>({
   queryBuilder,
-  pagination,
+  page,
   options,
   cursor,
   take,
 }: {
   queryBuilder: Knex.QueryBuilder
-  pagination: Pagination<OrderType>
+  page: Page<OrderType>
   options: Options
   cursor: Cursor | null
   take: number
 }): string {
-  const { orderBy, orderDir } = pagination
+  const { orderBy, orderDir } = page
   const { cursorColumn = DEFAULT_CURSOR_COLUMN } = options
 
   let query = queryBuilder.clone().select('*')
@@ -24,18 +24,18 @@ export function getDataQuery<OrderType>({
     if (take > 0) {
       for (let i = cursor.length - 1; i >= 0; i -= 1) {
         query = query.orWhere((qb: any) => {
-          qb.andWhere(cursor[i].field, '>=', cursor[i].value)
+          qb.andWhere(cursor[i].f, '>=', cursor[i].v)
           for (let j = i - 1; j >= 0; j -= 1) {
-            qb.andWhere(cursor[j].field, '=', cursor[j].value)
+            qb.andWhere(cursor[j].f, '=', cursor[j].v)
           }
         })
       }
     } else if (take < 0) {
       for (let i = cursor.length - 1; i >= 0; i -= 1) {
         query = query.orWhere((qb: any) => {
-          qb.andWhere(cursor[i].field, '<=', cursor[i].value)
+          qb.andWhere(cursor[i].f, '<=', cursor[i].v)
           for (let j = i - 1; j >= 0; j -= 1) {
-            qb.andWhere(cursor[j].field, '=', cursor[j].value)
+            qb.andWhere(cursor[j].f, '=', cursor[j].v)
           }
         })
       }
