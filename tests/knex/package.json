@@ -1,8 +1,4 @@
 {
   "name": "knex",
-  "private": true,
-  "dependencies": {
-    "sqlite3": "^5.0.1",
-    "knex": "^0.21.17"
-  }
+  "private": true
 }

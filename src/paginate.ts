@@ -11,7 +11,6 @@ import { getDataQuery } from './get-data-query'
 export async function paginate<OrderType, NodeType>(
   runQuery: (sql: string) => Promise<any>,
   queryBuilder: Knex.QueryBuilder,
-  queryParams: any = {},
   pagination: Pagination<OrderType> = {},
   options: Options = {},
 ): Promise<PaginatedData<NodeType>> {
@@ -84,7 +83,6 @@ export async function paginate<OrderType, NodeType>(
   const totalResult = await runQuery(
     getTotalCountQuery({
       queryBuilder,
-      queryParams,
     }),
   )
   const totalCount = totalResult.length && totalResult[0].count
@@ -93,7 +91,6 @@ export async function paginate<OrderType, NodeType>(
   const data: NodeType[] = await runQuery(
     getDataQuery<OrderType>({
       queryBuilder,
-      queryParams,
       pagination,
       options,
       cursor,

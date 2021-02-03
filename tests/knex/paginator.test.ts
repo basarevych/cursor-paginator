@@ -1,10 +1,9 @@
-import { OrderDirection, knexPaginate } from '../../src'
+import { OrderDirection, paginate } from '../../src'
 import { numUsers, getUsers, knex, User, UserOrder } from './knex'
 import { generateCursor } from '../../src/generate-cursor'
 import { encodeCursor } from '../../src/encode-cursor'
 
 describe('Paginator', () => {
-  const paginate = knexPaginate(knex, 'sqlite3')
   const orderBy = [UserOrder.EMAIL]
   const orderDir = [OrderDirection.ASC]
   let users: User[]
@@ -39,15 +38,15 @@ describe('Paginator', () => {
     ${5} | ${true}  | ${false} | ${[0, 1, 2, 3, 4]}
     ${6} | ${false} | ${false} | ${[0, 1, 2, 3, 4, 5]}
   `('first page (size: $size)', async ({ size, cursor, next, prev, result }) => {
-    const list = await paginate(
-      'users',
-      {},
-      {
+    const list = await paginate({
+      knex,
+      table: 'users',
+      pagination: {
         first: size,
         orderBy,
         orderDir,
       },
-    )
+    })
 
     expect(list.edges.length).toBe(result.length)
     expect(list).toEqual({
@@ -71,16 +70,16 @@ describe('Paginator', () => {
     ${5} | ${4}   | ${false} | ${true} | ${[5]}
     ${6} | ${5}   | ${false} | ${true} | ${[]}
   `('second page (size: $size)', async ({ size, cursor, next, prev, result }) => {
-    const list = await paginate(
-      'users',
-      {},
-      {
+    const list = await paginate({
+      knex,
+      table: 'users',
+      pagination: {
         first: size,
         after: getUserCursor(cursor),
         orderBy,
         orderDir,
       },
-    )
+    })
 
     expect(list.edges.length).toBe(result.length)
     expect(list).toEqual({
@@ -101,16 +100,16 @@ describe('Paginator', () => {
     ${2} | ${3}   | ${false} | ${true} | ${[4, 5]}
     ${3} | ${5}   | ${false} | ${true} | ${[]}
   `('third page (size: $size)', async ({ size, cursor, next, prev, result }) => {
-    const list = await paginate(
-      'users',
-      {},
-      {
+    const list = await paginate({
+      knex,
+      table: 'users',
+      pagination: {
         first: size,
         after: getUserCursor(cursor),
         orderBy,
         orderDir,
       },
-    )
+    })
 
     expect(list.edges.length).toBe(result.length)
     expect(list).toEqual({
@@ -134,15 +133,15 @@ describe('Paginator', () => {
     ${5} | ${false} | ${true}  | ${[1, 2, 3, 4, 5]}
     ${6} | ${false} | ${false} | ${[0, 1, 2, 3, 4, 5]}
   `('reverse: third page (size: $size)', async ({ size, cursor, next, prev, result }) => {
-    const list = await paginate(
-      'users',
-      {},
-      {
+    const list = await paginate({
+      knex,
+      table: 'users',
+      pagination: {
         last: size,
         orderBy,
         orderDir,
       },
-    )
+    })
 
     expect(list.edges.length).toBe(result.length)
     expect(list).toEqual({
@@ -165,16 +164,16 @@ describe('Paginator', () => {
     ${4} | ${2}   | ${true} | ${false} | ${[0, 1]}
     ${5} | ${1}   | ${true} | ${false} | ${[0]}
   `('reverse: second page (size: $size)', async ({ size, cursor, next, prev, result }) => {
-    const list = await paginate(
-      'users',
-      {},
-      {
+    const list = await paginate({
+      knex,
+      table: 'users',
+      pagination: {
         last: size,
         before: getUserCursor(cursor),
         orderBy,
         orderDir,
       },
-    )
+    })
 
     expect(list.edges.length).toBe(result.length)
     expect(list).toEqual({
@@ -195,16 +194,16 @@ describe('Paginator', () => {
     ${2} | ${2}   | ${true} | ${false} | ${[0, 1]}
     ${3} | ${0}   | ${true} | ${false} | ${[]}
   `('reverse: first page (size: $size)', async ({ size, cursor, next, prev, result }) => {
-    const list = await paginate(
-      'users',
-      {},
-      {
+    const list = await paginate({
+      knex,
+      table: 'users',
+      pagination: {
         last: size,
         before: getUserCursor(cursor),
         orderBy,
         orderDir,
       },
-    )
+    })
 
     expect(list.edges.length).toBe(result.length)
     expect(list).toEqual({

@@ -4,14 +4,12 @@ import { Cursor, DEFAULT_CURSOR_COLUMN, Options, Pagination } from './constants'
 
 export function getDataQuery<OrderType>({
   queryBuilder,
-  queryParams,
   pagination,
   options,
   cursor,
   take,
 }: {
   queryBuilder: Knex.QueryBuilder
-  queryParams: any
   pagination: Pagination<OrderType>
   options: Options
   cursor: Cursor | null
@@ -20,7 +18,7 @@ export function getDataQuery<OrderType>({
   const { orderBy, orderDir } = pagination
   const { cursorColumn = DEFAULT_CURSOR_COLUMN } = options
 
-  let query = queryBuilder.clone().select('*').where(queryParams)
+  let query = queryBuilder.clone().select('*')
 
   if (cursor) {
     if (take > 0) {
