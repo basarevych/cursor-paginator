@@ -1,24 +1,26 @@
+import Knex from 'knex'
+
 import { Cursor, DEFAULT_CURSOR_COLUMN, Options, Pagination } from './constants'
 
-export async function getData<OrderType, NodeType>({
-  queryRunner,
+export function getDataQuery<OrderType>({
+  queryBuilder,
   queryParams,
   pagination,
   options,
   cursor,
   take,
 }: {
-  queryRunner: any;
-  queryParams: any;
-  pagination: Pagination<OrderType>;
-  options: Options;
-  cursor: Cursor | null;
-  take: number;
-}): Promise<NodeType[]> {
+  queryBuilder: Knex.QueryBuilder
+  queryParams: any
+  pagination: Pagination<OrderType>
+  options: Options
+  cursor: Cursor | null
+  take: number
+}): string {
   const { orderBy, orderDir } = pagination
   const { cursorColumn = DEFAULT_CURSOR_COLUMN } = options
 
-  let query = queryRunner.clone().select('*').where(queryParams)
+  let query = queryBuilder.clone().select('*').where(queryParams)
 
   if (cursor) {
     if (take > 0) {
@@ -54,5 +56,5 @@ export async function getData<OrderType, NodeType>({
   }
   if (!isSortedById) orderByParams.push({ column: cursorColumn, order: 'asc' })
 
-  return query.orderBy(orderByParams)
+  return query.orderBy(orderByParams).toQuery()
 }

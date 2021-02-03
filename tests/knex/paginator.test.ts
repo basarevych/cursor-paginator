@@ -1,9 +1,10 @@
-import { paginate, OrderDirection } from '../src'
+import { OrderDirection, knexPaginate } from '../../src'
 import { numUsers, getUsers, knex, User, UserOrder } from './knex'
-import { generateCursor } from '../src/generate-cursor'
-import { encodeCursor } from '../src/encode-cursor'
+import { generateCursor } from '../../src/generate-cursor'
+import { encodeCursor } from '../../src/encode-cursor'
 
 describe('Paginator', () => {
+  const paginate = knexPaginate(knex, 'sqlite3')
   const orderBy = [UserOrder.EMAIL]
   const orderDir = [OrderDirection.ASC]
   let users: User[]
@@ -23,7 +24,6 @@ describe('Paginator', () => {
 
   beforeAll(async () => {
     users = await getUsers()
-    console.log(users)
   })
 
   afterAll(async () => {
@@ -40,7 +40,7 @@ describe('Paginator', () => {
     ${6} | ${false} | ${false} | ${[0, 1, 2, 3, 4, 5]}
   `('first page (size: $size)', async ({ size, cursor, next, prev, result }) => {
     const list = await paginate(
-      knex('users'),
+      'users',
       {},
       {
         first: size,
@@ -72,7 +72,7 @@ describe('Paginator', () => {
     ${6} | ${5}   | ${false} | ${true} | ${[]}
   `('second page (size: $size)', async ({ size, cursor, next, prev, result }) => {
     const list = await paginate(
-      knex('users'),
+      'users',
       {},
       {
         first: size,
@@ -102,7 +102,7 @@ describe('Paginator', () => {
     ${3} | ${5}   | ${false} | ${true} | ${[]}
   `('third page (size: $size)', async ({ size, cursor, next, prev, result }) => {
     const list = await paginate(
-      knex('users'),
+      'users',
       {},
       {
         first: size,
@@ -135,7 +135,7 @@ describe('Paginator', () => {
     ${6} | ${false} | ${false} | ${[0, 1, 2, 3, 4, 5]}
   `('reverse: third page (size: $size)', async ({ size, cursor, next, prev, result }) => {
     const list = await paginate(
-      knex('users'),
+      'users',
       {},
       {
         last: size,
@@ -166,7 +166,7 @@ describe('Paginator', () => {
     ${5} | ${1}   | ${true} | ${false} | ${[0]}
   `('reverse: second page (size: $size)', async ({ size, cursor, next, prev, result }) => {
     const list = await paginate(
-      knex('users'),
+      'users',
       {},
       {
         last: size,
@@ -196,7 +196,7 @@ describe('Paginator', () => {
     ${3} | ${0}   | ${true} | ${false} | ${[]}
   `('reverse: first page (size: $size)', async ({ size, cursor, next, prev, result }) => {
     const list = await paginate(
-      knex('users'),
+      'users',
       {},
       {
         last: size,

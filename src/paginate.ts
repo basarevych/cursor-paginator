@@ -1,14 +1,16 @@
+import Knex from 'knex'
 import equal from 'fast-deep-equal'
 
 import { DEFAULT_PAGE_SIZE, Options, Pagination, PaginatedData, Cursor } from './constants'
 import { generateCursor } from './generate-cursor'
 import { decodeCursor } from './decode-cursor'
 import { encodeCursor } from './encode-cursor'
-import { getTotalCount } from './get-total-count'
-import { getData } from './get-data'
+import { getTotalCountQuery } from './get-total-count-query'
+import { getDataQuery } from './get-data-query'
 
 export async function paginate<OrderType, NodeType>(
-  queryRunner: any,
+  runQuery: (sql: string) => Promise<any>,
+  queryBuilder: Knex.QueryBuilder,
   queryParams: any = {},
   pagination: Pagination<OrderType> = {},
   options: Options = {},
@@ -77,25 +79,27 @@ export async function paginate<OrderType, NodeType>(
     else extraTake -= 1
   }
 
+  // get total count
+
+  const totalResult = await runQuery(
+    getTotalCountQuery({
+      queryBuilder,
+      queryParams,
+    }),
+  )
+  const totalCount = totalResult.length && totalResult[0].count
+
   // get the data and total count
-
-  const totalCount = await getTotalCount({
-    queryRunner,
-    queryParams,
-    pagination,
-    options,
-    cursor,
-    take,
-  })
-
-  const data: NodeType[] = await getData<OrderType, NodeType>({
-    queryRunner,
-    queryParams,
-    pagination,
-    options,
-    cursor,
-    take: extraTake,
-  })
+  const data: NodeType[] = await runQuery(
+    getDataQuery<OrderType>({
+      queryBuilder,
+      queryParams,
+      pagination,
+      options,
+      cursor,
+      take: extraTake,
+    }),
+  )
 
   // analyze data
 

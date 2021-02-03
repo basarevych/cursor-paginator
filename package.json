@@ -8,21 +8,23 @@
     "build": "yarn-or-npm clean && yarn-or-npm tsc --outDir dist",
     "lint": "yarn-or-npm eslint './src/**/*' --ext .js,.ts",
     "format": "yarn-or-npm eslint './src/**/*' --ext .js,.ts --fix",
-    "pretest": "yarn-or-npm knex --cwd tests migrate:latest",
+    "init-knex": "cd tests/knex && yarn-or-npm && yarn-or-npm knex migrate:latest",
+    "init-prisma": "cd tests/prisma && yarn-or-npm && yarn-or-npm prisma generate",
+    "pretest": "yarn-or-npm init-knex && yarn-or-npm init-prisma",
     "test": "yarn-or-npm build && jest --maxWorkers 4 --testTimeout 60000",
     "test:coverage": "yarn-or-npm test --coverage",
     "test:debug": "yarn-or-npm test --debug --detectOpenHandles"
   },
   "dependencies": {
     "base-64": "^1.0.0",
-    "knex": "^0.21.17",
-    "pg": "^8.5.1"
+    "fast-deep-equal": "^3.1.3",
+    "knex": "^0.21.17"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",
     "@types/node": "^14.14.22",
-    "@typescript-eslint/eslint-plugin": "^4.14.1",
-    "@typescript-eslint/parser": "^4.14.1",
+    "@typescript-eslint/eslint-plugin": "^4.14.2",
+    "@typescript-eslint/parser": "^4.14.2",
     "copy-webpack-plugin": "^7.0.0",
     "eslint": "^7.19.0",
     "eslint-config-prettier": "^7.2.0",
@@ -30,12 +32,12 @@
     "eslint-plugin-prettier": "^3.3.1",
     "jest": "^26.6.3",
     "prettier": "^2.2.1",
+    "prisma": "^2.16.0",
     "rimraf": "^3.0.2",
-    "sqlite3": "^5.0.1",
     "ts-jest": "^26.5.0",
     "ts-loader": "^8.0.14",
     "typescript": "^4.1.3",
-    "webpack": "^5.19.0",
+    "webpack": "^5.20.0",
     "webpack-node-externals": "^2.5.2",
     "yarn-or-npm": "^3.0.1"
   }

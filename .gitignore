@@ -14,3 +14,5 @@ lib/**/*
 dist/**/*
 
 tests/*.db
+
+**/*.log
